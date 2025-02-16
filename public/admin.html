@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏榜单系统 - 管理后台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/admin.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>游戏榜单系统 - 管理后台</h1>
+            <div class="admin-controls">
+                <span id="adminName"></span>
+                <a href="/" class="back-to-frontend">回到前端</a>
+                <button id="logoutBtn" class="logout-btn">退出登录</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <nav class="admin-sidebar">
+            <button class="nav-item active" data-tab="games">游戏管理</button>
+            <button class="nav-item" data-tab="leaderboards">榜单管理</button>
+            <button class="nav-item" data-tab="site-info">网站信息</button>
+        </nav>
+
+        <div class="admin-content">
+            <div id="games" class="tab-content active">
+                <div class="section-header">
+                    <h2>游戏管理</h2>
+                    <button id="addGameBtn" class="primary-button">添加游戏</button>
+                </div>
+                <div id="gamesList" class="data-list"></div>
+            </div>
+
+            <div id="leaderboards" class="tab-content">
+                <div class="section-header">
+                    <h2>榜单管理</h2>
+                    <button id="addLeaderboardBtn" class="primary-button">
+                        <span class="material-icons">add</span>
+                        添加榜单
+                    </button>
+                </div>
+                <div id="leaderboardsList" class="data-list"></div>
+            </div>
+
+            <div id="site-info" class="tab-content">
+                <div class="section-header">
+                    <h2>网站信息</h2>
+                </div>
+                <form id="siteInfoForm" class="admin-form">
+                    <div class="form-group">
+                        <label for="headerText">页头文本</label>
+                        <input type="text" id="headerText" name="headerText" 
+                               placeholder="输入网站标题" required>
+                        <small class="form-hint">显示在网站顶部的标题文本</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="footerText">页脚文本</label>
+                        <input type="text" id="footerText" name="footerText" 
+                               placeholder="输入页脚信息" required>
+                        <small class="form-hint">显示在网站底部的版权和联系信息</small>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">保存更改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- 添加/编辑游戏的模态框 -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content game-form-modal">
+            <div class="modal-header">
+                <h2>添加游戏</h2>
+                <button type="button" class="close-modal">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <form id="gameForm" class="admin-form">
+                <div class="form-sections">
+                    <div class="form-section">
+                        <h3>基本信息</h3>
+                        <div class="form-group">
+                            <label for="gameName">游戏名称</label>
+                            <input type="text" id="gameName" name="name" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="gameRating">评分</label>
+                                <input type="number" id="gameRating" name="rating" 
+                                       step="0.1" min="0" max="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gamePrice">价格</label>
+                                <div class="price-input">
+                                    <span class="currency">￥</span>
+                                    <input type="number" id="gamePrice" name="price" 
+                                           step="0.01" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>详细信息</h3>
+                        <div class="form-group">
+                            <label for="gameDescription">游戏描述</label>
+                            <textarea id="gameDescription" name="description" required
+                                    placeholder="请输入游戏的详细描述..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>发行信息</h3>
+                        <div class="form-group">
+                            <label for="gameReleaseDate">发售日期</label>
+                            <input type="date" id="gameReleaseDate" name="release_date" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="gameDeveloper">开发商</label>
+                                <input type="text" id="gameDeveloper" name="developer" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gamePublisher">发行商</label>
+                                <input type="text" id="gamePublisher" name="publisher" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>其他信息</h3>
+                        <div class="form-group">
+                            <label for="gameTypes">游戏类型</label>
+                            <div class="chips-input">
+                                <input type="text" id="gameTypesInput" 
+                                       placeholder="输入类型后按回车添加">
+                                <div id="gameTypesChips" class="chips-container"></div>
+                                <input type="hidden" id="gameTypes" name="types" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameLanguages">支持语言</label>
+                            <div class="chips-input">
+                                <input type="text" id="gameLanguagesInput" 
+                                       placeholder="输入语言后按回车添加">
+                                <div id="gameLanguagesChips" class="chips-container"></div>
+                                <input type="hidden" id="gameLanguages" name="languages" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameImage">游戏图片URL</label>
+                            <input type="url" id="gameImage" name="image_url" 
+                                   placeholder="请输入图片URL">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="secondary-button close-modal">取消</button>
+                    <button type="submit" class="primary-button">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 修改榜单管理的模态框部分 -->
+    <div id="leaderboardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>添加榜单</h2>
+                <button type="button" class="close-modal">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <form id="leaderboardForm" class="admin-form">
+                <div class="form-sections">
+                    <!-- 基本信息部分 -->
+                    <div class="form-section">
+                        <h3>基本信息</h3>
+                        <div class="form-group">
+                            <label for="leaderboardName">榜单名称</label>
+                            <input type="text" id="leaderboardName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="leaderboardDescription">榜单描述</label>
+                            <textarea id="leaderboardDescription" name="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="leaderboardTheme">榜单主题</label>
+                            <select id="leaderboardTheme" name="theme" required>
+                                <option value="red">红榜（推荐）</option>
+                                <option value="black">黑榜（不推荐）</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="leaderboardActive" name="is_active" checked>
+                                在前端显示
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 游戏列表部分 -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h3>榜单游戏</h3>
+                            <button type="button" id="addGameToLeaderboard" class="secondary-button">
+                                <span class="material-icons">add</span>
+                                添加游戏
+                            </button>
+                        </div>
+                        <div id="leaderboardGames" class="games-list"></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="secondary-button close-modal">取消</button>
+                    <button type="submit" class="primary-button">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 添加游戏到榜单的模态框 -->
+    <div id="addGameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>添加游戏到榜单</h2>
+                <button type="button" class="close-modal">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <form id="addGameForm" class="admin-form">
+                <div class="form-sections">
+                    <div class="form-group">
+                        <label for="selectGame">选择游戏</label>
+                        <select id="selectGame" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gameRank">排名</label>
+                        <input type="number" id="gameRank" min="1" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="secondary-button close-modal">取消</button>
+                    <button type="submit" class="primary-button">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 添加确认对话框 -->
+    <div id="confirmDialog" class="modal">
+        <div class="modal-content confirm-dialog">
+            <div class="modal-header">
+                <h2>确认删除</h2>
+                <button type="button" class="close-modal">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="confirm-content">
+                <p>确定要删除这个项目吗？此操作无法撤销。</p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="secondary-button close-modal">取消</button>
+                <button type="button" class="danger-button" id="confirmDelete">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加状态提示组件 -->
+    <div id="loadingIndicator" class="loading-overlay">
+        <div class="loading-spinner">
+            <span class="material-icons rotating">refresh</span>
+            <span>加载中...</span>
+        </div>
+    </div>
+
+    <div id="errorIndicator" class="error-overlay">
+        <div class="error-content">
+            <span class="material-icons">error_outline</span>
+            <h3>出错了</h3>
+            <p id="errorMessage">加载数据时发生错误</p>
+            <button class="primary-button" onclick="location.reload()">重试</button>
+        </div>
+    </div>
+
+    <!-- 修改空状态模板 -->
+    <template id="emptyState">
+        <div class="empty-state">
+            <span class="material-icons">inbox</span>
+            <h3>暂无数据</h3>
+            <p>点击添加按钮开始创建</p>
+        </div>
+    </template>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html> 

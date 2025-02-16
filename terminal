@@ -1,0 +1,13 @@
+project/
+├── public/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── main.js
+│   └── index.html
+├── src/
+│   ├── database.js
+│   ├── routes.js
+│   └── server.js
+├── package.json
+└── database.sqlite 
