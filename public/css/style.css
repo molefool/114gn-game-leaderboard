@@ -66,42 +66,75 @@ header {
 }
 
 .tabs {
-    background-color: rgba(255, 255, 255, 0.7);  /* 降低不透明度 */
-    backdrop-filter: blur(20px) saturate(180%);  /* 增强模糊效果 */
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     display: flex;
-    padding: 0.5rem 1rem;
-    gap: 1rem;
+    padding: 0.25rem 0.25rem;  /* 减小内边距到0.25rem */
+    gap: 0.5rem;  /* 保持选项之间的间距不变 */
     margin: 0 auto 2rem;
-    box-shadow: 
-        0 4px 6px -1px rgba(0, 0, 0, 0.05),
-        0 2px 4px -1px rgba(0, 0, 0, 0.03);  /* 更柔和的阴影 */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                0 2px 4px -1px rgba(0, 0, 0, 0.03);
     position: sticky;
     top: 42px;
     z-index: 90;
     border-radius: 8px;
     overflow-x: auto;
     justify-content: center;
-    border-bottom: 1px solid rgba(60, 64, 67, 0.12);  /* 添加细边框 */
+    border-bottom: 1px solid rgba(60, 64, 67, 0.12);
+    
+    /* 增强触屏支持 */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;  /* 防止横向滚动触发浏览器导航 */
+    touch-action: pan-x pan-y;  /* 允许触摸平移 */
+    scroll-snap-type: x proximity;  /* 添加滚动吸附 */
+    padding-bottom: calc(0.25rem + env(safe-area-inset-bottom));  /* 减小底部内边距 */
 }
 
-/* Google 风格的滚动条 */
+/* 确保第一个选项可见 */
+.tab:first-child {
+    margin-left: 0;  /* 移除第一个选项的左边距 */
+}
+
+/* 滚动条样式优化 */
 .tabs::-webkit-scrollbar {
-    height: 7px;  /* 修改高度为7px */
+    height: 6px;
+    width: 6px;
 }
 
 .tabs::-webkit-scrollbar-track {
     background: transparent;
+    margin: 0 0.25rem;  /* 减小滚动条轨道的边距到0.25rem */
 }
 
 .tabs::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 3.5px;  /* 修改圆角为高度的一半 */
-    min-width: 300px;  /* 设置滚动条最小宽度为300px */
+    background-color: rgba(0, 0, 0, 0.1);  /* 修改透明度为0.1 */
+    border-radius: 6px;
+    min-width: 60px;
+    transition: background-color 0.3s ease;
+    backdrop-filter: blur(8px);
 }
 
 .tabs::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.2);  /* 悬停时加深一点 */
+}
+
+/* Firefox 滚动条样式 */
+.tabs {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) transparent;  /* 同样修改透明度为0.1 */
+}
+
+/* 深色模式下的滚动条 */
+@media (prefers-color-scheme: dark) {
+    .tabs::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.1);  /* 深色模式下也使用0.1透明度 */
+    }
+
+    .tabs::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
 }
 
 /* 选项卡样式 */
@@ -124,6 +157,10 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 44px;  /* iOS 建议的最小触摸区域 */
+    scroll-snap-align: start;  /* 配合滚动吸附 */
+    touch-action: manipulation;  /* 优化触摸操作 */
+    -webkit-tap-highlight-color: transparent;  /* 移除点击高亮 */
 }
 
 /* 文字容器 */
@@ -380,6 +417,25 @@ footer {
 
     .info-item, .languages {
         grid-template-columns: 85px 1fr;
+    }
+
+    .tabs {
+        padding-left: max(0.25rem, env(safe-area-inset-left));  /* 减小左侧内边距 */
+        padding-right: max(0.25rem, env(safe-area-inset-right));  /* 减小右侧内边距 */
+        margin: 0 0.5rem 2rem;
+        gap: 0.5rem;  /* 保持选项之间的间距不变 */
+    }
+
+    .tab {
+        padding: 0.75rem 1rem;  /* 增加垂直内边距 */
+    }
+
+    /* 防止 iOS 橡皮筋效果影响视觉体验 */
+    .tabs::before,
+    .tabs::after {
+        content: '';
+        padding: 0.1px;  /* 极小的内边距防止空白 */
+        flex: 0 0 auto;
     }
 }
 
@@ -664,4 +720,15 @@ footer {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+/* 适配深色模式 */
+@media (prefers-color-scheme: dark) {
+    .tabs::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.1);  /* 深色模式下也使用0.1透明度 */
+    }
+
+    .tabs::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
 } 

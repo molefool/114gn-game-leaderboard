@@ -166,14 +166,26 @@ async function loadLeaderboards() {
 // 加载网站信息
 async function loadSiteInfo() {
     try {
+        // 加载榜单列表用于填充下拉框
+        const leaderboardsResponse = await fetch('/api/leaderboards');
+        const leaderboards = await leaderboardsResponse.json();
+        
+        const defaultLeaderboardSelect = document.getElementById('defaultLeaderboard');
+        defaultLeaderboardSelect.innerHTML = leaderboards.map(board => `
+            <option value="${board.id}">${board.name}</option>
+        `).join('');
+
+        // 加载当前网站信息
         const response = await fetch('/api/site-info');
         const info = await response.json();
         
         // 填充表单
         document.getElementById('headerText').value = info.header_text || '';
         document.getElementById('footerText').value = info.footer_text || '';
+        document.getElementById('defaultLeaderboard').value = info.default_leaderboard || '';
     } catch (error) {
         console.error('加载网站信息失败:', error);
+        showError('加载网站信息失败');
     }
 }
 
@@ -238,35 +250,39 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// 修改网站信息保存处理
+// 处理网站信息表单提交
 document.getElementById('siteInfoForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const headerText = document.getElementById('headerText').value;
-    const footerText = document.getElementById('footerText').value;
-    
+    const formData = {
+        header_text: document.getElementById('headerText').value,
+        footer_text: document.getElementById('footerText').value,
+        default_leaderboard: parseInt(document.getElementById('defaultLeaderboard').value)
+    };
+
     try {
         const response = await fetch('/api/site-info', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                header_text: headerText,
-                footer_text: footerText
-            })
+            body: JSON.stringify(formData)
         });
 
         if (response.ok) {
+            const result = await response.json();
             showToast('网站信息更新成功');
-            // 更新页面标题
-            document.querySelector('.header-content h1').textContent = headerText;
+            // 刷新页面以应用更改
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } else {
-            showToast('更新失败，请重试', 'error');
+            const error = await response.json();
+            showToast(error.error || '更新失败，请重试', 'error');
         }
     } catch (error) {
-        console.error('保存网站信息失败:', error);
-        showToast('保存失败，请检查网络连接', 'error');
+        console.error('更新网站信息失败:', error);
+        showToast('更新失败，请检查网络连接', 'error');
     }
 });
 

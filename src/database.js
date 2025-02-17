@@ -68,7 +68,9 @@ db.serialize(() => {
             id INTEGER PRIMARY KEY CHECK (id = 1),
             header_text TEXT,
             footer_text TEXT,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            default_leaderboard INTEGER,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (default_leaderboard) REFERENCES leaderboards(id)
         )
     `);
 
@@ -182,14 +184,19 @@ db.serialize(() => {
         });
     });
 
-    // 添加网站信息
-    db.run(`INSERT OR REPLACE INTO site_info (id, header_text, footer_text) 
-           VALUES (1, ?, ?)`,
-        [
-            '欢迎来到游戏榜单系统 - 发现精彩游戏动态',
-            '© 2024 游戏榜单系统 | 联系我们：contact@gameleaderboard.com'
-        ]
-    );
+    // 确保至少有一条记录
+    db.get('SELECT id FROM site_info WHERE id = 1', (err, row) => {
+        if (!row) {
+            db.run(`
+                INSERT INTO site_info (id, header_text, footer_text, default_leaderboard)
+                VALUES (1, ?, ?, ?)
+            `, [
+                '欢迎来到游戏榜单系统 - 发现精彩游戏动态',
+                '© 2024 游戏榜单系统 | 联系我们：contact@gameleaderboard.com',
+                1
+            ]);
+        }
+    });
 });
 
 module.exports = db; 

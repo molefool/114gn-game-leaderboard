@@ -312,23 +312,73 @@ router.delete('/api/leaderboards/:id', (req, res) => {
 // 获取网站信息
 router.get('/api/site-info', (req, res) => {
     db.get('SELECT * FROM site_info WHERE id = 1', (err, info) => {
-        if (err) return res.status(500).json({ error: '服务器错误' });
-        res.json(info || { header_text: '', footer_text: '' });
+        if (err) {
+            console.error('获取网站信息失败:', err);
+            return res.status(500).json({ error: '服务器错误' });
+        }
+        res.json(info || {});
     });
 });
 
 // 更新网站信息
 router.put('/api/site-info', (req, res) => {
-    if (!req.session.userId) return res.status(401).json({ error: '未登录' });
-    
-    const { header_text, footer_text } = req.body;
-    db.run(`
-        INSERT OR REPLACE INTO site_info (id, header_text, footer_text, updated_at)
-        VALUES (1, ?, ?, CURRENT_TIMESTAMP)
-    `, [header_text, footer_text],
-    function(err) {
-        if (err) return res.status(500).json({ error: '服务器错误' });
-        res.json({ header_text, footer_text });
+    if (!req.session.userId) {
+        return res.status(401).json({ error: '未登录' });
+    }
+
+    const { header_text, footer_text, default_leaderboard } = req.body;
+
+    // 先检查榜单是否存在
+    db.get('SELECT id FROM leaderboards WHERE id = ?', [default_leaderboard], (err, row) => {
+        if (err) {
+            console.error('检查榜单失败:', err);
+            return res.status(500).json({ error: '服务器错误' });
+        }
+        
+        if (!row) {
+            return res.status(400).json({ error: '选择的榜单不存在' });
+        }
+
+        // 更新网站信息
+        db.run(`
+            UPDATE site_info 
+            SET header_text = ?,
+                footer_text = ?,
+                default_leaderboard = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 1
+        `, [header_text, footer_text, default_leaderboard], function(err) {
+            if (err) {
+                console.error('更新网站信息失败:', err);
+                return res.status(500).json({ error: '服务器错误' });
+            }
+
+            if (this.changes === 0) {
+                // 如果没有更新任何行，说明需要插入
+                db.run(`
+                    INSERT INTO site_info (id, header_text, footer_text, default_leaderboard)
+                    VALUES (1, ?, ?, ?)
+                `, [header_text, footer_text, default_leaderboard], function(err) {
+                    if (err) {
+                        console.error('插入网站信息失败:', err);
+                        return res.status(500).json({ error: '服务器错误' });
+                    }
+                    res.json({
+                        id: 1,
+                        header_text,
+                        footer_text,
+                        default_leaderboard
+                    });
+                });
+            } else {
+                res.json({
+                    id: 1,
+                    header_text,
+                    footer_text,
+                    default_leaderboard
+                });
+            }
+        });
     });
 });
 

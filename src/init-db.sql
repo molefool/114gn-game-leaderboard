@@ -40,4 +40,23 @@ INSERT INTO leaderboard_games (leaderboard_id, game_id, rank) VALUES
 -- 2022年榜单
 (3, 7, 1),
 (3, 8, 2),
-(3, 9, 3); 
+(3, 9, 3);
+
+-- 修改 site_info 表，添加默认榜单字段
+DROP TABLE IF EXISTS site_info;
+CREATE TABLE site_info (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    header_text TEXT,
+    footer_text TEXT,
+    default_leaderboard INTEGER,  -- 新增字段：默认显示的榜单ID
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (default_leaderboard) REFERENCES leaderboards(id)
+);
+
+-- 插入默认数据
+INSERT INTO site_info (id, header_text, footer_text, default_leaderboard) 
+VALUES (1, 
+    '欢迎来到游戏榜单系统 - 发现精彩游戏动态',
+    '© 2024 游戏榜单系统 | 联系我们：contact@gameleaderboard.com',
+    1  -- 默认显示第一个榜单
+); 

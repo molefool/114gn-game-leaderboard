@@ -1,4 +1,4 @@
-// 加载网站信息
+// 加载网站信息和默认榜单
 async function loadSiteInfo() {
     try {
         const response = await fetch('/api/site-info');
@@ -21,7 +21,7 @@ async function loadLeaderboards() {
         // 生成标签页
         const tabsContainer = document.getElementById('leaderboardTabs');
         tabsContainer.innerHTML = leaderboards.map((board, index) => `
-            <button class="tab ${index === 0 ? 'active' : ''}" 
+            <button class="tab" 
                     data-tab="board-${board.id}">
                 <span>${board.name}</span>
             </button>
@@ -30,7 +30,7 @@ async function loadLeaderboards() {
         // 生成内容区域
         const contentsContainer = document.getElementById('leaderboardContents');
         contentsContainer.innerHTML = leaderboards.map((board, index) => `
-            <div id="board-${board.id}" class="tab-content ${index === 0 ? 'active' : ''}">
+            <div id="board-${board.id}" class="tab-content">
                 ${board.games.map(game => `
                     <div class="leaderboard-item" data-theme="${board.theme}">
                         <div class="card-layout">
@@ -93,12 +93,23 @@ async function loadLeaderboards() {
         // 重新绑定标签页事件
         setupTabs();
 
-        // 在生成标签页后添加：
-        setTimeout(() => {
-            document.querySelectorAll('.tab').forEach(tab => {
-                checkOverflow(tab);
-            });
-        }, 100);  // 给一点时间让DOM完全渲染
+        // 在生成标签页后，获取并设置默认榜单
+        const siteInfoResponse = await fetch('/api/site-info');
+        const siteInfo = await siteInfoResponse.json();
+        
+        if (siteInfo.default_leaderboard) {
+            const defaultTab = document.querySelector(`.tab[data-tab="board-${siteInfo.default_leaderboard}"]`);
+            if (defaultTab) {
+                defaultTab.click();
+            }
+        } else {
+            // 如果没有设置默认榜单，激活第一个标签
+            const firstTab = document.querySelector('.tab');
+            if (firstTab) {
+                firstTab.click();
+            }
+        }
+
     } catch (error) {
         console.error('加载榜单数据失败:', error);
     }
@@ -166,10 +177,35 @@ async function checkLoginStatus() {
     }
 }
 
+// 添加鼠标滚轮横向滚动支持
+function setupHorizontalScroll() {
+    const tabsContainer = document.querySelector('.tabs');
+    
+    tabsContainer.addEventListener('wheel', (e) => {
+        // 检查是否是移动设备
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            return; // 在移动设备上不启用此功能
+        }
+
+        // 阻止默认的垂直滚动
+        e.preventDefault();
+
+        // 计算滚动距离（考虑不同浏览器的兼容性）
+        const delta = Math.max(-1, Math.min(1, e.deltaY || -e.detail));
+        
+        // 使用平滑滚动
+        tabsContainer.scrollBy({
+            left: delta * 50,  // 每次滚动50像素
+            behavior: 'smooth'
+        });
+    }, { passive: false });  // 设置为非被动模式以允许阻止默认行为
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     loadSiteInfo();
     loadLeaderboards();
-    checkLoginStatus();  // 添加登录状态检查
+    checkLoginStatus();
+    setupHorizontalScroll();  // 添加横向滚动支持
 }); 
