@@ -124,8 +124,10 @@ function setupTabs() {
         tab.addEventListener('click', () => {
             // 移除所有活动状态
             tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(content => {
-                content.classList.remove('active');
+            contents.forEach(c => {
+                c.classList.remove('active');
+                // 重置滚动位置
+                c.scrollTop = 0;
             });
 
             // 添加新的活动状态
@@ -134,6 +136,11 @@ function setupTabs() {
             const targetContent = document.getElementById(targetId);
             if (targetContent) {
                 targetContent.classList.add('active');
+                // 确保页面滚动到顶部
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
         });
     });

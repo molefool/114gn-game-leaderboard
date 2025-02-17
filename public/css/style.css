@@ -25,28 +25,28 @@ body {
     font-family: 'Google Sans', 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f8f9fa;  /* 稍微深一点的背景色，让毛玻璃效果更明显 */
     color: var(--md-text-primary);
     line-height: 1.5;
     
-    /* 添加背景图片样式 */
-    background-image: url('https://api.yimian.xyz/img?type=moe');  /* 随机二次元图片API */
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;  /* 固定背景，避免滚动 */
+    /* 修改背景图片样式 */
+    background: url('https://api.yimian.xyz/img?type=moe') center/cover no-repeat fixed;
+    min-height: 100vh;  /* 确保背景覆盖整个视口高度 */
     
-    /* 添加半透明遮罩，确保内容可读性 */
-    &::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.85);  /* 白色半透明遮罩 */
-        z-index: -1;
-    }
+    /* 修改遮罩层样式 */
+    position: relative;
+}
+
+/* 修改遮罩层 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85);  /* 白色半透明遮罩 */
+    z-index: -1;
+    pointer-events: none;  /* 确保遮罩层不影响交互 */
 }
 
 header {
