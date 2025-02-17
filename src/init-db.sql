@@ -53,10 +53,16 @@ CREATE TABLE site_info (
     FOREIGN KEY (default_leaderboard) REFERENCES leaderboards(id)
 );
 
--- 插入默认数据
-INSERT INTO site_info (id, header_text, footer_text, default_leaderboard) 
+-- 修改网站信息
+UPDATE site_info 
+SET header_text = '欢迎来到广陵榜单系统 - 发现精彩游戏动态',
+    footer_text = '© 2024 广陵榜单系统 | 联系我们：molefool1997@gmail.com'
+WHERE id = 1;
+
+-- 如果没有记录，则插入
+INSERT OR IGNORE INTO site_info (id, header_text, footer_text, default_leaderboard) 
 VALUES (1, 
-    '欢迎来到游戏榜单系统 - 发现精彩游戏动态',
-    '© 2024 游戏榜单系统 | 联系我们：contact@gameleaderboard.com',
+    '欢迎来到广陵榜单系统 - 发现精彩游戏动态',
+    '© 2024 广陵榜单系统 | 联系我们：molefool1997@gmail.com',
     1  -- 默认显示第一个榜单
 ); 

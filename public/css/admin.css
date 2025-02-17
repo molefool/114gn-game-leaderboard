@@ -46,25 +46,103 @@
     margin-bottom: 1rem;
 }
 
-/* 按钮样式 */
-.primary-button {
-    background: var(--md-primary);
-    color: white;
+/* Google Material Design 风格的按钮基础样式 */
+.primary-button, .secondary-button {
+    height: 36px;  /* Google 标准按钮高度 */
+    padding: 0 16px;  /* 标准内边距 */
     border: none;
-    padding: 0.5rem 1rem;
     border-radius: 4px;
-    cursor: pointer;
     font-family: 'Google Sans', sans-serif;
+    font-size: 14px;  /* Google 标准字体大小 */
+    font-weight: 500;
+    letter-spacing: 0.25px;  /* 提升可读性 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);  /* Material Design 动画曲线 */
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
+/* 主要按钮 */
+.primary-button {
+    background-color: #1a73e8;  /* Google Blue */
+    color: white;
+}
+
+.primary-button:hover {
+    background-color: #1557b0;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
+                0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+.primary-button:active {
+    background-color: #174ea6;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+}
+
+/* 次要按钮 */
 .secondary-button {
-    background: var(--md-surface-variant);
-    color: var(--md-text-secondary);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'Google Sans', sans-serif;
+    background-color: white;
+    color: #1a73e8;
+    border: 1px solid #dadce0;
+}
+
+.secondary-button:hover {
+    background-color: #f8f9fa;
+    border-color: #d2e3fc;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+}
+
+.secondary-button:active {
+    background-color: #f1f3f4;
+    border-color: #d2e3fc;
+}
+
+/* 禁用状态 */
+.primary-button:disabled,
+.secondary-button:disabled {
+    background-color: #f1f3f4;
+    color: #5f6368;
+    border-color: transparent;
+    cursor: default;
+    box-shadow: none;
+}
+
+/* 带图标的按钮 */
+.primary-button .material-icons,
+.secondary-button .material-icons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* 小尺寸按钮 */
+.primary-button.small,
+.secondary-button.small {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
+}
+
+/* 大尺寸按钮 */
+.primary-button.large,
+.secondary-button.large {
+    height: 40px;
+    padding: 0 24px;
+    font-size: 15px;
+}
+
+/* 全宽按钮 */
+.primary-button.full-width,
+.secondary-button.full-width {
+    width: 100%;
+    justify-content: center;
 }
 
 /* 表单样式 */
@@ -91,11 +169,16 @@
 }
 
 .form-group label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0;
-    padding-top: 1.75rem;
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    color: var(--md-text-primary);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    margin-bottom: 0.25rem;
 }
 
 .form-group input[type="checkbox"] {
@@ -133,25 +216,32 @@ textarea {
 
 /* 模态框样式 */
 .modal {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
     z-index: 1000;
 }
 
 .modal-content {
     position: relative;
-    background: var(--md-surface);
+    background: white;
     width: 90%;
     max-width: 600px;
     margin: 2rem auto;
-    padding: 1.5rem;
     border-radius: 12px;
-    max-height: 90vh;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    flex: 1;
     overflow-y: auto;
 }
 
@@ -218,42 +308,6 @@ textarea {
     color: var(--md-text-secondary);
     border-radius: 12px;
     font-size: 0.75rem;
-}
-
-/* 操作按钮样式 */
-.edit-btn, .delete-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.edit-btn {
-    background-color: var(--md-primary-container);
-    color: var(--md-on-primary-container);
-}
-
-.delete-btn {
-    background-color: rgba(234, 67, 53, 0.1);
-    color: #EA4335;
-}
-
-.edit-btn:hover {
-    background-color: var(--md-on-primary-container);
-    color: var(--md-primary-container);
-}
-
-.delete-btn:hover {
-    background-color: rgba(234, 67, 53, 0.2);
-}
-
-.material-icons {
-    font-size: 18px;
 }
 
 /* 响应式设计 */
@@ -359,26 +413,6 @@ textarea {
     }
 }
 
-/* 模态框内表单样式优化 */
-.modal-content {
-    max-width: 800px;
-    padding: 0;
-}
-
-.form-row {
-    margin-bottom: 1rem;
-}
-
-textarea {
-    min-height: 120px;
-}
-
-.form-hint {
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
-    color: var(--md-text-secondary);
-}
-
 /* 游戏表单模态框样式 */
 .game-form-modal {
     max-width: 800px;
@@ -386,11 +420,11 @@ textarea {
 }
 
 .modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--md-outline);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--md-outline);
 }
 
 .modal-header h2 {
@@ -929,4 +963,109 @@ textarea {
 .danger-button:hover {
     background-color: #D93025;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 确保模态框内容不会溢出 */
+.modal form {
+    margin: 0;
+    height: 100%;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--md-outline);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* 操作按钮组 */
+.button-group {
+    display: flex;
+    gap: 8px;  /* Google 标准间距 */
+    align-items: center;
+}
+
+/* 编辑按钮 - 使用 Google Blue */
+.edit-btn {
+    height: 36px;
+    padding: 0 16px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    background-color: white;
+    color: #1a73e8;  /* Google Blue */
+    font-family: 'Google Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.edit-btn:hover {
+    background-color: #f8f9fa;
+    border-color: #d2e3fc;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+}
+
+.edit-btn:active {
+    background-color: #f1f3f4;
+    border-color: #d2e3fc;
+}
+
+/* 删除按钮 - 使用 Google Red */
+.delete-btn {
+    height: 36px;
+    padding: 0 16px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    background-color: white;
+    color: #d93025;  /* Google Red */
+    font-family: 'Google Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.delete-btn:hover {
+    background-color: #fce8e6;  /* Google Red 背景 */
+    border-color: #fad2cf;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+}
+
+.delete-btn:active {
+    background-color: #fad2cf;
+    border-color: #fad2cf;
+}
+
+/* 按钮中的图标样式 */
+.edit-btn .material-icons,
+.delete-btn .material-icons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* 禁用状态 */
+.edit-btn:disabled,
+.delete-btn:disabled {
+    background-color: #f1f3f4;
+    color: #5f6368;
+    border-color: transparent;
+    cursor: default;
+    box-shadow: none;
 } 
